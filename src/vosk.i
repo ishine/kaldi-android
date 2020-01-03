@@ -1,4 +1,4 @@
-%module kaldi
+%module vosk
 
 %include <typemaps.i>
 %include <std_string.i>

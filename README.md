@@ -1,25 +1,36 @@
-This is still work in progress, more to come
+Language bindings for Vosk and Kaldi to access speech recognition from various languages and on various platforms
 
-## TODO
+  * Python on Linux, Windows and RPi
+  * Node
+  * Android
+  * iOS
 
-   * Integrate https://github.com/jcsilva/docker-kaldi-android build scripts and make sure it builds
-     for all architectures (x86, armv7, arm64). Think of moving Kaldi build to cmake for quick portability.
+## Kaldi build
 
-   * Build proper optimized large vocabulary model (maybe 20k words from teldium, 4-5 layers, small enough to run on mobile)
+```
+git clone https://github.com/alphacep/kaldi
+cd kaldi
+git checkout lookahead
+cd tools
+make -j 10
+extras/install_openblas.sh
+cd ../src
+./configure --mathlib=OPENBLAS --shared --use-cuda=no
+make -j 10
+```
 
-   * Move to grammar decoder to avoid huge HCLG model. https://github.com/jpuigcerver/kaldi-decoders
+## Python module build
 
-   * Load model from the AAR (mmap them in tflite style)
+```
+cd python
+python3 setup.py install
+```
 
-   * Add decoding speed measurement
+## Android build
 
-   * Add wakeup word
+```
+cd android
+gradle build
+```
 
-   * Integrate proper hardware optimized neural network library. Candidates are:
-
-      * https://github.com/XiaoMi/mace
-      * https://github.com/Tencent/ncnn
-      * https://developer.android.com/ndk/guides/neuralnetworks/ (since API level 27)
-      * https://github.com/google/XNNPACK
-
-   * Quantization for the models
+Please note that medium blog post about 64-bit is not relevant anymore, the script builds x86, arm64 and armv7 libraries automatically without any modifications.

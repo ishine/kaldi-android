@@ -11,12 +11,20 @@ KaldiRecognizer::KaldiRecognizer(Model &model, float sample_frequency) : model_(
     feature_pipeline_ = new kaldi::OnlineNnet2FeaturePipeline (model_.feature_info_);
     silence_weighting_ = new kaldi::OnlineSilenceWeighting(*model_.trans_model_, model_.feature_info_.silence_weighting_config, 3);
 
-    decode_fst_ = LookaheadComposeFst(*model_.hcl_fst_, *model_.g_fst_, model_.disambig_);
+    if (!model_.hclg_fst_) {
+        if (model_.hcl_fst_ && model_.g_fst_) {
+            decode_fst_ = LookaheadComposeFst(*model_.hcl_fst_, *model_.g_fst_, model_.disambig_);
+        } else {
+            KALDI_ERR << "Can't create decoding graph";
+        }
+    } else {
+        decode_fst_ = NULL;
+    }
 
     decoder_ = new kaldi::SingleUtteranceNnet3Decoder(model_.nnet3_decoding_config_,
             *model_.trans_model_,
             *model_.decodable_info_,
-            *decode_fst_,
+            model_.hclg_fst_ ? *model.hclg_fst_ : *decode_fst_,
             feature_pipeline_);
 
     frame_offset_ = 0;
@@ -110,9 +118,13 @@ std::string KaldiRecognizer::Result()
     fst::ScaleLattice(fst::LatticeScale(8.0, 10.0), &clat);
 
     CompactLattice aligned_lat;
-    WordAlignLattice(clat, *model_.trans_model_, *model_.winfo_, 0, &aligned_lat);
-    MinimumBayesRisk mbr(aligned_lat);
+    if (model_.winfo_) {
+        WordAlignLattice(clat, *model_.trans_model_, *model_.winfo_, 0, &aligned_lat);
+    } else {
+        aligned_lat = clat;
+    }
 
+    MinimumBayesRisk mbr(aligned_lat);
     const std::vector<BaseFloat> &conf = mbr.GetOneBestConfidences();
     const std::vector<int32> &words = mbr.GetOneBest();
     const std::vector<std::pair<BaseFloat, BaseFloat> > &times =

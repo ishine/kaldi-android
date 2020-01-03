@@ -1,6 +1,8 @@
 #!/bin/bash
 # Follows jsilva setup
 
+exit 0
+
 set -x
 
 ANDROID_NDK_HOME=$HOME/android/sdk/ndk-bundle
@@ -67,7 +69,7 @@ esac
 
 # openblas first
 cd $WORKDIR
-git clone https://github.com/xianyi/OpenBLAS
+git clone -b v0.3.7 --single-branch https://github.com/xianyi/OpenBLAS
 make -C OpenBLAS TARGET=$BLAS_ARCH ONLY_CBLAS=1 AR=$AR CC=$CC HOSTCC=gcc ARM_SOFTFP_ABI=1 USE_THREAD=0 NUM_THREADS=1 -j4
 make -C OpenBLAS install PREFIX=$WORKDIR/local
 
@@ -79,7 +81,7 @@ wget -c -T 10 -t 3 http://www.openslr.org/resources/2/openfst-${OPENFST_VERSION}
 tar -zxvf openfst-${OPENFST_VERSION}.tar.gz
 cd openfst-${OPENFST_VERSION}
 
-CXX=$CXX CXXFLAGS="$ARCHFLAGS -O3 -ftree-vectorize -DFST_NO_DYNAMIC_LINKING" ./configure --prefix=${WORKDIR}/local \
+CXX=$CXX CXXFLAGS="$ARCHFLAGS -O3 -DFST_NO_DYNAMIC_LINKING" ./configure --prefix=${WORKDIR}/local \
     --enable-shared --enable-static --with-pic --disable-bin \
     --enable-lookahead-fsts --enable-ngram-fsts --host=$HOST --build=x86-linux-gnu
 make -j 8
@@ -90,7 +92,7 @@ cd $WORKDIR
 git clone -b android-mix --single-branch https://github.com/alphacep/kaldi
 cd $WORKDIR/kaldi/src
 
-CXX=$CXX CXXFLAGS="$ARCHFLAGS -O3 -ftree-vectorize -DFST_NO_DYNAMIC_LINKING" ./configure --use-cuda=no \
+CXX=$CXX CXXFLAGS="$ARCHFLAGS -O3 -DFST_NO_DYNAMIC_LINKING" ./configure --use-cuda=no \
     --mathlib=OPENBLAS --shared \
     --android-incdir=${ANDROID_TOOLCHAIN_PATH}/sysroot/usr/include \
     --host=$HOST --openblas-root=${WORKDIR}/local \

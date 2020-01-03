@@ -1,5 +1,21 @@
+//
+// Possible model layout:
+//
+// * Default kaldi model with HCLG.fst
+//
+// * Lookahead model with const G.fst
+//
+// * Lookahead model with ngram G.fst
+//
+// * File disambig_tid.int required only for lookadhead models
+//
+// * File word_boundary.int is required if we want to have precise word timing information
+//   otherwise we don't do any word alignment. Optionally lexicon alignment can be done
+//   with corresponding C++ code inside kaldi recognizer.
+
 #include "model.h"
 
+#include <sys/stat.h>
 #include <fst/fst.h>
 #include <fst/register.h>
 #include <fst/matcher-fst.h>
@@ -7,17 +23,9 @@
 
 namespace fst {
 
-static FstRegisterer<StdOLabelLookAheadFst>
-    OLabelLookAheadFst_StdArc_registerer;
-
-static FstRegisterer<MatcherFst<
-    ConstFst<LogArc>,
-    LabelLookAheadMatcher<SortedMatcher<ConstFst<LogArc>>,
-                          olabel_lookahead_flags, FastLogAccumulator<LogArc>>,
-    olabel_lookahead_fst_type, LabelLookAheadRelabeler<LogArc>>>
-    OLabelLookAheadFst_LogArc_registerer;
-
+static FstRegisterer<StdOLabelLookAheadFst> OLabelLookAheadFst_StdArc_registerer;
 static FstRegisterer<NGramFst<StdArc>> NGramFst_StdArc_registerer;
+
 }  // namespace fst
 
 #ifdef __ANDROID__
@@ -57,7 +65,7 @@ Model::Model(const char *model_path) {
     decodable_opts_.Register(&po);
 
     std::vector<const char*> args;
-    args.push_back("server");
+    args.push_back("vosk");
     args.insert(args.end(), extra_args, extra_args + sizeof(extra_args) / sizeof(extra_args[0]));
     po.Read(args.size(), args.data());
 
@@ -84,9 +92,12 @@ Model::Model(const char *model_path) {
     feature_info_.ivector_extractor_info.Init(ivector_extraction_opts);
 
     nnet3_rxfilename_ = model_path_str + "/final.mdl";
+    hclg_fst_rxfilename_ = model_path_str + "/HCLG.fst";
     hcl_fst_rxfilename_ = model_path_str + "/HCLr.fst";
     g_fst_rxfilename_ = model_path_str + "/Gr.fst";
     disambig_rxfilename_ = model_path_str + "/disambig_tid.int";
+    word_syms_rxfilename_ = model_path_str + "/words.txt";
+    winfo_rxfilename_ = model_path_str + "/word_boundary.int";
 
     trans_model_ = new kaldi::TransitionModel();
     nnet_ = new kaldi::nnet3::AmNnetSimple();
@@ -102,17 +113,38 @@ Model::Model(const char *model_path) {
 
     decodable_info_ = new nnet3::DecodableNnetSimpleLoopedInfo(decodable_opts_,
                                                                nnet_);
-    hcl_fst_ = fst::StdFst::Read(hcl_fst_rxfilename_);
-    g_fst_ = fst::StdFst::Read(g_fst_rxfilename_);
+    struct stat buffer;
+    if (stat(hclg_fst_rxfilename_.c_str(), &buffer) == 0) {
+        hclg_fst_ = fst::ReadFstKaldiGeneric(hclg_fst_rxfilename_);
+        hcl_fst_ = NULL;
+        g_fst_ = NULL;
+    } else {
+        hclg_fst_ = NULL;
+        hcl_fst_ = fst::StdFst::Read(hcl_fst_rxfilename_);
+        g_fst_ = fst::StdFst::Read(g_fst_rxfilename_);
 
-    word_syms_ = g_fst_->OutputSymbols();
-    if (word_syms_ == NULL)
-        KALDI_ERR << "No word symbols in the grammar";
+        ReadIntegerVectorSimple(disambig_rxfilename_, &disambig_);
+    }
 
-    kaldi::WordBoundaryInfoNewOpts opts;
-    winfo_ = new kaldi::WordBoundaryInfo(opts, model_path_str + "/word_boundary.int");
+    word_syms_ = NULL;
+    if (hclg_fst_ && hclg_fst_->OutputSymbols()) {
+        word_syms_ = hclg_fst_->OutputSymbols();
+    } else if (g_fst_ && g_fst_->OutputSymbols()) {
+        word_syms_ = g_fst_->OutputSymbols();
+    }
+    if (!word_syms_) {
+        if (!(word_syms_ = fst::SymbolTable::ReadText(word_syms_rxfilename_)))
+            KALDI_ERR << "Could not read symbol table from file "
+                      << word_syms_rxfilename_;
+    }
+    KALDI_ASSERT(word_syms_);
 
-    ReadIntegerVectorSimple(disambig_rxfilename_, &disambig_);
+    if (stat(winfo_rxfilename_.c_str(), &buffer) == 0) {
+        kaldi::WordBoundaryInfoNewOpts opts;
+        winfo_ = new kaldi::WordBoundaryInfo(opts, winfo_rxfilename_);
+    } else {
+        winfo_ = NULL;
+    }
 }
 
 Model::~Model() {
@@ -120,6 +152,7 @@ Model::~Model() {
     delete trans_model_;
     delete nnet_;
     delete winfo_;
+    delete hclg_fst_;
     delete hcl_fst_;
     delete g_fst_;
 }

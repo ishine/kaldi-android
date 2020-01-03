@@ -46,9 +46,11 @@ protected:
     friend class KaldiRecognizer;
 
     std::string nnet3_rxfilename_;
+    std::string hclg_fst_rxfilename_;
     std::string hcl_fst_rxfilename_;
     std::string g_fst_rxfilename_;
     std::string word_syms_rxfilename_;
+    std::string winfo_rxfilename_;
     std::string disambig_rxfilename_;
 
     kaldi::OnlineEndpointConfig endpoint_config_;
@@ -63,6 +65,7 @@ protected:
     kaldi::WordBoundaryInfo *winfo_;
     std::vector<int32> disambig_;
 
+    fst::Fst<fst::StdArc> *hclg_fst_;
     fst::Fst<fst::StdArc> *hcl_fst_;
     fst::Fst<fst::StdArc> *g_fst_;
 };
