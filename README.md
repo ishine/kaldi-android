@@ -6,7 +6,7 @@ Language bindings for Vosk and Kaldi to access speech recognition from various l
   * Node
   * Android
   * iOS
-  
+
 ## Android build
 
 ```
@@ -16,26 +16,70 @@ gradle build
 
 Please note that medium blog post about 64-bit is not relevant anymore, the script builds x86, arm64 and armv7 libraries automatically without any modifications.
 
-## Python module build
+## Python installation from Pypi
 
-First build Kaldi
+Make sure you have pip:
+
+  * Python version >= 3.4
+  * pip version >= 19.0
+
+Uprade python and pip if needed. Then install vosk on Linux with a simple command
 
 ```
-git clone https://github.com/alphacep/kaldi
-cd kaldi
-git checkout lookahead
-cd tools
-make -j 10
+pip install vosk
+```
+
+## Kaldi compilation for local python, node and java modules
+
+```
+git clone -b lookahead --single-branch https://github.com/alphacep/kaldi
+cd kaldi/tools
+make
+```
+
+install all dependencies and repeat `make` if needed
+
+```
 extras/install_openblas.sh
 cd ../src
 ./configure --mathlib=OPENBLAS --shared --use-cuda=no
 make -j 10
 ```
-Then python module
+
+## Java example API build
 
 ```
+cd java && KALDI_ROOT=<KALDI_ROOT> make
+wget https://github.com/alphacep/kaldi-android-demo/releases/download/2020-01/alphacep-model-android-en-us-0.3.tar.gz
+tar xf alphacep-model-android-en-us-0.3.tar.gz 
+mv alphacep-model-android-en-us-0.3 model
+make run
+```
+
+## Python module build
+
+Then build the python module
+
+```
+export KALDI_ROOT=<KALDI_ROOT>
 cd python
 python3 setup.py install
 ```
 
+## Running the example code with python
 
+Run like this:
+
+```
+cd vosk-api/python/example
+wget https://github.com/alphacep/kaldi-android-demo/releases/download/2020-01/alphacep-model-android-en-us-0.3.tar.gz
+tar xf alphacep-model-android-en-us-0.3.tar.gz 
+mv alphacep-model-android-en-us-0.3 model
+python3 ./test_local.py test.wav
+```
+
+There are models for other languages available too.
+
+To run with your audio file make sure it has proper format - PCM 16khz 16bit mono, otherwise decoding will not work.
+
+Microphone example will come soon.

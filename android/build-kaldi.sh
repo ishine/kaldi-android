@@ -1,9 +1,37 @@
 #!/bin/bash
-# Follows jsilva setup
+
+# Copyright 2019 Alpha Cephei Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+if [ "x$ANDROID_SDK_HOME" == "x" ]; then
+    echo "ANDROID_SDK_HOME environment variable is undefined, define it with local.properties or with export"
+    exit 1
+fi
+
+if [ ! -d "$ANDROID_SDK_HOME" ]; then
+    echo "ANDROID_SDK_HOME ($ANDROID_SDK_HOME) is missing. Make sure you have sdk installed"
+    exit 1
+fi
+
+if [ ! -d "$ANDROID_SDK_HOME/ndk-bundle" ]; then
+    echo "$ANDROID_SDK_HOME/ndk-bundle is missing. Make sure you have ndk installed within sdk"
+    exit 1
+fi
 
 set -x
 
-ANDROID_NDK_HOME=$HOME/android/sdk/ndk-bundle
+ANDROID_NDK_HOME=$ANDROID_SDK_HOME/ndk-bundle
 ANDROID_TOOLCHAIN_PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64
 WORKDIR_X86_64=`pwd`/build/kaldi_x86_64
 WORKDIR_ARM32=`pwd`/build/kaldi_arm_32
