@@ -52,7 +52,19 @@ cd ../src
 make -j 10
 ```
 
+#### Python module build
+
+Then build the python module
+
+```
+export KALDI_ROOT=<KALDI_ROOT>
+cd python
+python3 setup.py install
+```
+
 #### Java example API build
+
+Or Java
 
 ```
 cd java && KALDI_ROOT=<KALDI_ROOT> make
@@ -62,14 +74,16 @@ mv alphacep-model-android-en-us-0.3 model
 make run
 ```
 
-#### Python module build
+#### C# build
 
-Then build the python module
+Or C#
 
 ```
-export KALDI_ROOT=<KALDI_ROOT>
-cd python
-python3 setup.py install
+cd csharp && KALDI_ROOT=<KALDI_ROOT> make
+wget https://github.com/alphacep/kaldi-android-demo/releases/download/2020-01/alphacep-model-android-en-us-0.3.tar.gz
+tar xf alphacep-model-android-en-us-0.3.tar.gz 
+mv alphacep-model-android-en-us-0.3 model
+mono test.exe
 ```
 
 ## Running the example code with python
@@ -84,8 +98,17 @@ mv alphacep-model-android-en-us-0.3 model
 python3 ./test_simple.py test.wav
 ```
 
-There are models for other languages available too.
+There are models for other languages (English, Chinese, Spanish, Portuguese, German, French, Russian) available too at https://github.com/alphacep/kaldi-android-demo/releases
 
 To run with your audio file make sure it has proper format - PCM 16khz 16bit mono, otherwise decoding will not work.
 
-Microphone example will come soon.
+You can find other examples of using a microphone, decoding with a fixed small vocabulary or speaker identification setup in  [python/example subfolder](https://github.com/alphacep/vosk-api/tree/master/python/example)
+
+## Contact Us
+
+If you have any questions, feel free to
+
+   * Post an issue here on github
+   * Send us an e-mail at [contact@alphacephei.com](mailto:contact@alphacephei.com)
+   * Join our group dedicated to speech recognition on Telegram [@speech_recognition](https://t.me/speech_recognition)
+   
