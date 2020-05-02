@@ -11,6 +11,7 @@ KALDI_LIBS = \
              ${KALDI_ROOT}/src/tree/kaldi-tree.a \
              ${KALDI_ROOT}/src/feat/kaldi-feat.a \
              ${KALDI_ROOT}/src/lat/kaldi-lat.a \
+             ${KALDI_ROOT}/src/lm/kaldi-lm.a \
              ${KALDI_ROOT}/src/hmm/kaldi-hmm.a \
              ${KALDI_ROOT}/src/transform/kaldi-transform.a \
              ${KALDI_ROOT}/src/cudamatrix/kaldi-cudamatrix.a \
@@ -43,10 +44,10 @@ libkaldiwrap.so: $(VOSK_SOURCES)
 	$(CXX) -fpermissive $(CFLAGS) $(CPPFLAGS) -shared -o $@ $(VOSK_SOURCES) $(KALDI_LIBS)
 
 vosk_wrap.c: ../src/vosk.i
-	swig -csharp -DSWIG_CSHARP_NO_EXCEPTION_HELPER -dllimport "libkaldiwrap.so" \
+	swig -csharp -DSWIG_CSHARP_NO_EXCEPTION_HELPER -dllimport "libkaldiwrap" \
 	    -namespace "Kaldi" -outdir gen -o vosk_wrap.c ../src/vosk.i
 
-run:
+run: test.exe
 	mono test.exe
 
 clean:

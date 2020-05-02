@@ -6,7 +6,7 @@
 
 Библитека для распознавания речи "Воск". Преимущества библиотеки:
 
-  1. Поддерживает 8 языков - русский, английский, немецкий, французский, португальский, испанский, китайский, вьетнамский. В скором времени будут добавлены и другие
+  1. Поддерживает 9 языков - русский, английский, немецкий, французский, португальский, испанский, китайский, турецкий, вьетнамский. В скором времени будут добавлены и другие
   1. Работает без доступа к сети даже на мобильных устройствах - Raspberry Pi, Android, iOS
   1. Устанавливается с помощью простой команды `pip3 install vosk` без дополнительных шагов
   1. Модели для каждого языка занимают всего 50Мб, но есть и гораздо более точные большие модели для более точного распознавания
@@ -100,8 +100,8 @@ python3 setup.py install
 
 ```
 cd vosk-api/python/example
-wget https://github.com/alphacep/kaldi-android-demo/releases/download/2020-01/alphacep-model-android-en-us-0.3.tar.gz
-tar xf alphacep-model-android-en-us-0.3.tar.gz 
+wget https://alphacephei.com/kaldi/models/vosk-model-small-en-us-0.3.zip
+unzip alphacep-model-android-en-us-0.3.zip
 mv alphacep-model-android-en-us-0.3 model-en
 python3 ./test_simple.py test.wav
 ```
@@ -116,8 +116,8 @@ python3 ./test_simple.py test.wav
 
 ```
 cd java && KALDI_ROOT=<KALDI_ROOT> make
-wget https://github.com/alphacep/kaldi-android-demo/releases/download/2020-01/alphacep-model-android-en-us-0.3.tar.gz
-tar xf alphacep-model-android-en-us-0.3.tar.gz 
+wget https://alphacephei.com/kaldi/models/vosk-model-small-en-us-0.3.zip
+unzip alphacep-model-android-en-us-0.3.zip
 mv alphacep-model-android-en-us-0.3 model
 make run
 ```
@@ -128,8 +128,8 @@ make run
 
 ```
 cd csharp && KALDI_ROOT=<KALDI_ROOT> make
-wget https://github.com/alphacep/kaldi-android-demo/releases/download/2020-01/alphacep-model-android-en-us-0.3.tar.gz
-tar xf alphacep-model-android-en-us-0.3.tar.gz 
+wget https://alphacephei.com/kaldi/models/vosk-model-small-en-us-0.3.zip
+unzip alphacep-model-android-en-us-0.3.zip
 mv alphacep-model-android-en-us-0.3 model
 mono test.exe
 ```
