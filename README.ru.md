@@ -1,3 +1,5 @@
+[![Vosk Logo](https://alphacephei.com/img/logo_mini.png)](https://alphacephei.com)
+
 [![Build Status](https://travis-ci.com/alphacep/vosk-api.svg?branch=master)](https://travis-ci.com/alphacep/vosk-api)
 
 [EN](README.md)
@@ -128,8 +130,8 @@ python3 setup.py install
 ```
 cd vosk-api/python/example
 wget https://alphacephei.com/kaldi/models/vosk-model-small-en-us-0.3.zip
-unzip alphacep-model-android-en-us-0.3.zip
-mv alphacep-model-android-en-us-0.3 model-en
+unzip alphacep-model-small-en-us-0.3.zip
+mv alphacep-model-small-en-us-0.3 model-en
 python3 ./test_simple.py test.wav
 ```
 
@@ -144,8 +146,8 @@ python3 ./test_simple.py test.wav
 ```
 cd java && KALDI_ROOT=<KALDI_ROOT> make
 wget https://alphacephei.com/kaldi/models/vosk-model-small-en-us-0.3.zip
-unzip alphacep-model-android-en-us-0.3.zip
-mv alphacep-model-android-en-us-0.3 model
+unzip alphacep-model-small-en-us-0.3.zip
+mv alphacep-model-small-en-us-0.3 model
 make run
 ```
 
@@ -156,8 +158,8 @@ make run
 ```
 cd csharp && KALDI_ROOT=<KALDI_ROOT> make
 wget https://alphacephei.com/kaldi/models/vosk-model-small-en-us-0.3.zip
-unzip alphacep-model-android-en-us-0.3.zip
-mv alphacep-model-android-en-us-0.3 model
+unzip alphacep-model-small-en-us-0.3.zip
+mv alphacep-model-small-en-us-0.3 model
 mono test.exe
 ```
 

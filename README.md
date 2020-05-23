@@ -1,3 +1,5 @@
+[![Vosk Logo](https://alphacephei.com/img/logo_mini.png)](https://alphacephei.com)
+
 [![Build Status](https://travis-ci.com/alphacep/vosk-api.svg?branch=master)](https://travis-ci.com/alphacep/vosk-api)
 
 [РУС](README.ru.md)
@@ -123,8 +125,8 @@ Run like this:
 ```
 cd vosk-api/python/example
 wget https://alphacephei.com/kaldi/models/vosk-model-small-en-us-0.3.zip
-unzip alphacep-model-android-en-us-0.3.zip
-mv alphacep-model-android-en-us-0.3 model
+unzip alphacep-model-small-en-us-0.3.zip
+mv alphacep-model-small-en-us-0.3 model
 python3 ./test_simple.py test.wav
 ```
 
@@ -139,8 +141,8 @@ Or Java
 ```
 cd java && KALDI_ROOT=<KALDI_ROOT> make
 wget https://alphacephei.com/kaldi/models/vosk-model-small-en-us-0.3.zip
-unzip alphacep-model-android-en-us-0.3.zip
-mv alphacep-model-android-en-us-0.3 model
+unzip alphacep-model-small-en-us-0.3.zip
+mv alphacep-model-small-en-us-0.3 model
 make run
 ```
 
@@ -151,8 +153,8 @@ Or C#
 ```
 cd csharp && KALDI_ROOT=<KALDI_ROOT> make
 wget https://alphacephei.com/kaldi/models/vosk-model-small-en-us-0.3.zip
-unzip alphacep-model-android-en-us-0.3.zip
-mv alphacep-model-android-en-us-0.3 model
+unzip alphacep-model-small-en-us-0.3.zip
+mv alphacep-model-small-en-us-0.3 model
 mono test.exe
 ```
 
@@ -167,3 +169,4 @@ If you have any questions, feel free to
    * Post an issue here on github
    * Send us an e-mail at [contact@alphacephei.com](mailto:contact@alphacephei.com)
    * Join our group dedicated to speech recognition on Telegram [@speech_recognition](https://t.me/speech_recognition)
+   * Join [Wechat group](https://alphacephei.com/img/wechat/wechat.jpg) for discussion in Chinese
