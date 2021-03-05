@@ -1,4 +1,4 @@
-// Copyright 2020 Alpha Cephei Inc.
+// Copyright 2020-2021 Alpha Cephei Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -211,6 +211,20 @@ void vosk_recognizer_free(VoskRecognizer *recognizer);
  *     greather than 0 - more verbose mode
  */
 void vosk_set_log_level(int log_level);
+
+/**
+ *  Init, automatically select a CUDA device and allow multithreading.
+ *  Must be called once from the main thread.
+ *  Has no effect if HAVE_CUDA flag is not set.
+ */
+void vosk_gpu_init();
+
+/**
+ *  Init CUDA device in a multi-threaded environment.
+ *  Must be called for each thread.
+ *  Has no effect if HAVE_CUDA flag is not set.
+ */
+void vosk_gpu_thread_init();
 
 #ifdef __cplusplus
 }

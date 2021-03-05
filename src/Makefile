@@ -1,16 +1,21 @@
 KALDI_ROOT?=$(HOME)/travis/kaldi
 OPENFST_ROOT?=$(KALDI_ROOT)/tools/openfst
 OPENBLAS_ROOT?=$(KALDI_ROOT)/tools/OpenBLAS/install
+HAVE_CUDA?=0
+CUDA_ROOT?=/usr/local/cuda
 EXT?=so
 CXX?=g++
-VOSK_SOURCES= \
-    kaldi_recognizer.cc \
-    language_model.cc \
-    model.cc \
-    spk_model.cc \
-    vosk_api.cc
 
-CFLAGS=-g -O2 -std=c++17 -fPIC -DFST_NO_DYNAMIC_LINKING -I. -I$(KALDI_ROOT)/src -I$(OPENFST_ROOT)/include -I$(OPENBLAS_ROOT)/include
+VOSK_SOURCES= \
+	kaldi_recognizer.cc \
+	language_model.cc \
+	model.cc \
+	spk_model.cc \
+	vosk_api.cc
+
+CFLAGS=-g -O2 -std=c++17 -fPIC -DFST_NO_DYNAMIC_LINKING \
+	-I. -I$(KALDI_ROOT)/src -I$(OPENFST_ROOT)/include -I$(OPENBLAS_ROOT)/include
+
 LIBS= \
 	$(KALDI_ROOT)/src/online2/kaldi-online2.a \
 	$(KALDI_ROOT)/src/decoder/kaldi-decoder.a \
@@ -34,6 +39,11 @@ LIBS= \
 	$(OPENBLAS_ROOT)/lib/libf2c.a \
 	$(OPENFST_ROOT)/lib/libfst.a \
 	$(OPENFST_ROOT)/lib/libfstngram.a
+
+ifeq ($(HAVE_CUDA), 1)
+CFLAGS+=-DHAVE_CUDA=1 -I$(CUDA_ROOT)/include
+LIBS+=-L$(CUDA_ROOT)/lib64 -lcublas -lcusparse -lcudart -lcurand -lcufft -lcusolver -lnvToolsExt
+endif
 
 all: libvosk.$(EXT)
 
